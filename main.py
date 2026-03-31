@@ -2,10 +2,14 @@ from fastapi import FastAPI, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
+from datetime import datetime, timezone
+
 from db import Base, engine
 from deps import get_db, get_current_user
 import crud, models, schemas, auth
 from permissions import is_admin, can_edit_article, can_delete_article
+from health import check_database
+from pydantic import BaseModel, Field
 from schemas import (
     UserOut, UserCreate, UserUpdate,
     RoleOut, RoleCreate, RoleUpdate,
@@ -19,6 +23,10 @@ Base.metadata.create_all(bind=engine)
 # Метаінформація та теги
 # ─────────────────────────────────────────────
 tags_metadata = [
+    {
+        "name": "Health",
+        "description": "Перевірка стану сервісу та його залежностей.",
+    },
     {
         "name": "Auth",
         "description": "Автентифікація користувачів. Отримання JWT-токена через логін.",
@@ -74,11 +82,59 @@ app = FastAPI(
     },
 )
 
+class HealthResponse(BaseModel):
+    status: str = Field(..., description="Загальний стан сервісу: ok або unavailable", examples=["ok"])
+    timestamp: str = Field(..., description="Час перевірки у форматі ISO 8601")
+    version: str = Field(..., description="Версія API", examples=["1.0.0"])
+    database: dict = Field(..., description="Стан підключення до бази даних")
+
+    model_config = {
+        "json_schema_extra": {
+            "examples": [{
+                "status": "ok",
+                "timestamp": "2024-01-01T12:00:00+00:00",
+                "version": "1.0.0",
+                "database": {"status": "ok"}
+            }]
+        }
+    }
+
+
 _errors = {
     401: {"model": ErrorResponse, "description": "Не автентифікований або невалідний токен"},
     403: {"model": ErrorResponse, "description": "Недостатньо прав доступу"},
     404: {"model": ErrorResponse, "description": "Ресурс не знайдено"},
 }
+
+
+# ═══════════════════════════════════════════════
+# HEALTH
+# ═══════════════════════════════════════════════
+
+@app.get(
+    "/health",
+    tags=["Health"],
+    response_model=HealthResponse,
+    summary="Перевірка стану сервісу",
+    description=(
+        "Повертає загальний стан сервісу та його залежностей.\n\n"
+        "- **status: ok** — сервіс працює нормально\n"
+        "- **status: unavailable** — є проблеми (деталі у полі `database`)\n\n"
+        "Не потребує авторизації. Використовується для моніторингу та Docker healthcheck."
+    ),
+    responses={
+        200: {"description": "Стан сервісу повернуто (навіть якщо є проблеми)"},
+    },
+)
+def health_check(db: Session = Depends(get_db)):
+    db_status = check_database(db)
+    overall = "ok" if db_status["status"] == "ok" else "unavailable"
+    return HealthResponse(
+        status=overall,
+        timestamp=datetime.now(timezone.utc).isoformat(),
+        version="1.0.0",
+        database=db_status,
+    )
 
 
 # ═══════════════════════════════════════════════

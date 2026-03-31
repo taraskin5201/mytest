@@ -61,6 +61,7 @@ REST API для управління статтями з рольовою мод
     ├── permissions.py          # Перевірка прав доступу
     ├── schemas.py              # Pydantic схеми
     ├── seed.py                 # Наповнення БД початковими даними
+    ├── health.py               # Перевірка стану сервісу та його залежностей
     ├── Dockerfile              # Образ для app та seed
     ├── Dockerfile.test         # Образ для тестів
     ├── docker-compose.yml      # Dev оточення
