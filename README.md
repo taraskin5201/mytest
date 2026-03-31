@@ -87,13 +87,13 @@ REST API для управління статтями з рольовою мод
 
 ### Кроки
 
-**1. Створи `.env` файл:**
+**1. Створення `.env` файлу:**
 
 \`\`\`bash
 cp .env.example .env
 \`\`\`
 
-**2. Збери і запусти контейнери:**
+**2. Збирання і запуск контейнера:**
 
 \`\`\`bash
 docker compose up --build
@@ -130,28 +130,28 @@ docker compose down -v
 
 ### Кроки
 
-**1. Встанови залежності:**
+**1. Встановити залежності:**
 
 \`\`\`bash
 pip install -r requirements.txt
 \`\`\`
 
-**2. Налаштуй підключення до БД.**
+**2. Налаштувати підключення до БД.**
 
-Для PostgreSQL — створи `.env` файл:
+Для PostgreSQL — створити `.env` файл:
 
 \`\`\`bash
 cp .env.example .env
-# Відредагуй DATABASE_URL у .env
+# Редагування DATABASE_URL у .env
 \`\`\`
 
-Для швидкого старту без PostgreSQL — заміни в `config.py`:
+Для швидкого старту без PostgreSQL — замінити в `config.py`:
 
 \`\`\`python
 DATABASE_URL: str = "sqlite:///./dev.db"
 \`\`\`
 
-**3. Запусти сервер:**
+**3. Запуск сервера:**
 
 \`\`\`bash
 uvicorn main:app --reload
@@ -211,19 +211,19 @@ python seed.py
 
 ### Локально
 
-**1. Встанови тестові залежності:**
+**1. Встановити тестові залежності:**
 
 \`\`\`bash
 pip install pytest pytest-cov httpx
 \`\`\`
 
-**2. Запусти тести:**
+**2. Запустити тести:**
 
 \`\`\`bash
 pytest
 \`\`\`
 
-**3. Запусти з покриттям:**
+**3. Запустити з покриттям:**
 
 \`\`\`bash
 pytest --cov=. --cov-config=.coveragerc --cov-report=term-missing
@@ -256,9 +256,9 @@ pytest --cov=. --cov-config=.coveragerc --cov-report=term-missing
 
 ### Авторизація в Swagger UI
 
-1. Відкрий \`http://localhost:8000/docs\`
-2. Виконай \`POST /auth/login\` (username: \`admin1\`, password: \`adminpass\`)
-3. Натисни кнопку **Authorize** 
+1. Відкрити \`http://localhost:8000/docs\`
+2. Виконати \`POST /auth/login\` (username: \`admin1\`, password: \`adminpass\`)
+3. Натиснути кнопку **Authorize** 
 
 
 ---
@@ -273,10 +273,10 @@ pytest --cov=. --cov-config=.coveragerc --cov-report=term-missing
 
 ### Імпорт у Postman
 
-1. Відкрий Postman
-2. **Import** → перетягни \`.json\` файл
-3. Запусти **Login** першим — токен збережеться автоматично у змінну \`{{token}}\`
-4. Далі запускай будь-які запити або використовуй **Collection Runner**
+1. Відкрити Postman
+2. **Import** → перетягнути \`.json\` файл
+3. Запустити **Login** першим — токен збережеться автоматично у змінну \`{{token}}\`
+4. Далі запуск будь-яких запитів або використовувати **Collection Runner**
 
 ---
 
