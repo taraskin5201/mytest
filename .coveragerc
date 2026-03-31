@@ -1,0 +1,19 @@
+[run]
+source = .
+omit =
+    test_unit.py
+    test_users.py
+    test_roles.py
+    test_auth.py
+    test_articles.py
+    seed.py
+    db.py
+    */migrations/*
+    */alembic/*
+    conftest.py
+
+[report]
+exclude_lines =
+    pragma: no cover
+    if __name__ == .__main__.:
+    raise NotImplementedError
